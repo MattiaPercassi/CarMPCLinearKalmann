@@ -1,11 +1,12 @@
 #include <eigen/Eigen/Dense>
 #include <iostream>
 #include <fstream>
-#include "discretizeLTI.h"
-#include "augmentLTI.h"
-#include "globalMatrixes.h"
-#include "gradientMatrixes.h"
-#include "solveOpt.h"
+// #include "discretizeLTI.h"
+// #include "augmentLTI.h"
+// #include "globalMatrixes.h"
+// #include "gradientMatrixes.h"
+// #include "solveOpt.h"
+#include "MPC.h"
 #include "openLoop.h"
 #include "trajectoryGen.h"
 #include "KalmannFilter.h"
@@ -112,6 +113,8 @@ int main()
     Eigen::MatrixXd Pstatecov = Eigen::MatrixXd::Zero(4, 4);
     Pstatecov << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pi / 60, 0, 0, 0, 0, 0; // arbitrary for exercises purposes
 
+    // temporary vector for input calculation TODO - adjust
+    Eigen::MatrixXd xest = Eigen::MatrixXd::Zero(5, 1);
     // steering angle
     double delta{0};
     std::ofstream file{"simRes.txt"};
@@ -124,18 +127,23 @@ int main()
     {
         refg = ref.block(i * ec, 0, n * ec, 1);
         Eigen::MatrixXd error = ref.block(i * ec, 0, ec, 1) - stateestimate.block(2, 0, 2, 1);
-        ug = calculateOptInputsdyn(invH, F, xk, refg, n, sc, ec);
+        xest.block(0, 0, 4, 1) = stateestimate;
+        xest(4, 0) = delta;
+        ug = calculateOptInputsdyn(invH, F, xest, refg, n, sc, ec);
         delta += ug(0, 0);
         // delta must be constrained between the real available steering angles +- pi/6
         if (delta < -pi / 6)
             delta = -pi / 6;
         else if (delta > pi / 6)
             delta = pi / 6;
-
+        xest(4, 0) = delta;
         xk(4, 0) = delta;
 
         // For test purposes update the states with same refinement as controller sample frequency, this represents both the system and the system state prediction
-        xk.block(0, 0, 4, 1) = Ad * xk.block(0, 0, 4, 1) + Bd * delta;
+        stateestimate = Ad * stateestimate + Bd * delta;
+
+        // Non linear function for the update of the open loop system
+        xk = updateOLSnonLinear(xk, xd, h, delta, Ad, Bd);
         yk = Ct * xk;
         stateestimate = xk.block(0, 0, 4, 1);
 
