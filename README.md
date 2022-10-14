@@ -34,22 +34,29 @@ The simulation will proceed along the following logic
 - Initialize all quantities, matrixes and trajectory vector
 
 - Main simulation loop (one loop per each MPC update step, the update step is a variable to be defined)
-    - Read current system state (use the linear system data -> Using non linear equation can be used as a source of improvement to refine the simulation of the car motion. Fusion with LTI data can be considered in this case as a simulation of a state estimation in a real case)
+    - Select proper reference vector elements for the time step
+    - Calculate error between the reference vector and the state estimation vector
     - Calculate the optimized Ddelta vectors for the next N time steps
     - Calculate steering angle (real system input) with the first element of the Ddelta vector (steering angle will be limited within an interval to represent the physical limit of a real steering system)
+    - Calculation of the a priori system state estimation through the LTI model
     - System status update loop (one loop per each fraction of update step, update step to be divided in M fractions, value to be defined) [CURRENTLY NOT YET IMPLEMENTED]
         - use the input Ddelta and current status to evaluate the system with the non-linear state space equations
-    - Calculation of the a priori system state through the LTI model
     - Creation of the gyro measurement and evaluation of the a posteriori system estimate
     - Write the states of the system in a convenient location for data plotting
 
 -DATA VISUALIZATION-
 A simple python script using matplotlib will be used to plot the various states with respect to time and analyze the results
 
-Here below results obtained with a sin-like trajectory
+Here below results obtained with a tanh-like and sin-like trajectory
 
-SINH
+TANH
+
+![XYt](XYplaneTanh.png)
+![Yawt](yawAngleSinTanh.png)
+![errort](errorsTanh.png)
+
+SIN
 
 ![XYs](XYplaneSin.png)
 ![Yaws](yawAngleSin.png)
-![error](errors.png)
+![errors](errorsSin.png)
