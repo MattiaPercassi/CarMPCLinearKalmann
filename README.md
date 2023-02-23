@@ -1,6 +1,6 @@
-Car lateral MPC + Linear Kalmann Filter
+Car lateral MPC + Linear Kalman Filter
 
-This project is meant to be an implementation of a simulation of an MPC controller on a car following a trajectory in the XY plane and the application of a Kalmann filter on simulated measurements.
+This project is meant to be an implementation of a simulation of an MPC controller on a car following a trajectory in the XY plane and the application of a Kalman filter on simulated measurements.
 
 -PHYSICAL MODEL-
 The model used is a single rigid body bycicle model.
@@ -20,10 +20,10 @@ Finally the discrete LTI model is augmented to take as input the Ddelta (variati
 All integration of differential equations is done through the forward Euler method.
 The transformation of the system equations in state space system is meant to rewrite the problem in term of ODE equations only.
 
--KALMANN FILTER-
+-KALMAN FILTER-
 A linear Kalmann filter is used.
 The measurement of the gyroscope is obtained through adding a 0 mean error as a standard distribution on the current system state. Due to the use of the same LTI model for both the MPC and for updating the states of the simulation the error is small.
-However as a proof of concept we can observe the error decreasing over time, as expected from linear Kalmann filter properies.
+However as a proof of concept we can observe the error decreasing over time, as expected from linear Kalman filter properies.
 The filter is applied on the basic discrete system with 4 states while the augmented system is used for the MPC code.
 
 -SIMULATION-
