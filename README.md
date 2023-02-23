@@ -4,7 +4,7 @@ This project is meant to be an implementation of a simulation of an MPC controll
 
 -PHYSICAL MODEL-
 The model used is a single rigid body bycicle model.
-The system can be described in terms of 3 dof, the absolute position X, the absolute position Y and the yat angle PSI.
+The system can be described in terms of 3 dof, the absolute position X, the absolute position Y and the yaw angle PSI.
 For simplification, the equations of motions are written with respect to the local referece xy that is attached to the center of mass of the moving vehicle.
 The control action on the system is the angle delta, which is the steering angle of the car, through the variation of which we can control the modulus of the velocity vector along the y local axis.
 The longitudinal velocity of the car is assumed to be constant xd, and due to this semplification no forces will be considered along the x direction.
